@@ -59,10 +59,10 @@ public class WeatherController extends AppCompatActivity {
         setContentView(R.layout.weather_controller_layout);
 
         // Linking the elements in the layout to Java code
-        mCityLabel = findViewById(R.id.locationTV);
-        mWeatherImage = findViewById(R.id.weatherSymbolIV);
-        mTemperatureLabel = findViewById(R.id.tempTV);
-        ImageButton changeCityButton = findViewById(R.id.changeCityButton);
+        mCityLabel = (TextView) findViewById(R.id.locationTV);
+        mWeatherImage = (ImageView) findViewById(R.id.weatherSymbolIV);
+        mTemperatureLabel = (TextView) findViewById(R.id.tempTV);
+        ImageButton changeCityButton = (ImageButton) findViewById(R.id.changeCityButton);
 
 
         // TODO: Add an OnClickListener to the changeCityButton here:
@@ -75,6 +75,7 @@ public class WeatherController extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d("Clima", "onResume() called");
         Log.d("Clima", "Getting weather for current location");
         getWeatherForCurrentLocation();
     }
@@ -99,10 +100,10 @@ public class WeatherController extends AppCompatActivity {
                 Log.d("Clima", "latitude is:" + latitude);
 
                 RequestParams params = new RequestParams();
-                params.put("Lat", latitude);
+                params.put("lat", latitude);
                 params.put("lon", longitude);
                 params.put("appid", APP_ID);
-                doNetworking(params);
+                letsDoSomeNetworking(params);
 
             }
 
@@ -118,11 +119,11 @@ public class WeatherController extends AppCompatActivity {
 
             @Override
             public void onProviderDisabled(String s) {
-                Log.d("Clima", "onProviderDisabled() callback recieved");
+                Log.d("Clima", "onProviderDisabled() callback received");
             }
         };
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -130,7 +131,7 @@ public class WeatherController extends AppCompatActivity {
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
 
             return;
         }
@@ -154,7 +155,7 @@ public class WeatherController extends AppCompatActivity {
 
 
     // TODO: Add letsDoSomeNetworking(RequestParams params) here:
-    private void doNetworking(RequestParams params) {
+    private void letsDoSomeNetworking(RequestParams params) {
 
         // HTTP Request
         AsyncHttpClient client = new AsyncHttpClient();
@@ -166,7 +167,9 @@ public class WeatherController extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.d("Clima", "Success! JSON:" + response.toString());
 
-                WeatherDataModel weatherDataModel = WeatherDataModel.fromJson(response);
+                WeatherDataModel weatherData = WeatherDataModel.fromJson(response);
+
+                updateUI(weatherData);
             }
 
             @Override
@@ -181,7 +184,13 @@ public class WeatherController extends AppCompatActivity {
     }
 
     // TODO: Add updateUI() here:
+    private void updateUI(WeatherDataModel weather) {
+        mTemperatureLabel.setText(weather.getTemperature());
+        mCityLabel.setText(weather.getCity());
 
+        int resourceID = getResources().getIdentifier(weather.getIconName(), "drawable", getPackageName());
+        mWeatherImage.setImageResource(resourceID);
+    }
 
     // TODO: Add onPause() here:
 
