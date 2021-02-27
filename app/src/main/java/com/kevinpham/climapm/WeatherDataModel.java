@@ -5,31 +5,43 @@ import org.json.JSONObject;
 
 public class WeatherDataModel {
 
-    // TODO: Declare the member variables here
+    // Member variables:
     private String mTemperature;
     private int mCondition;
     private String mCity;
     private String mIconName;
 
 
-    // TODO: Create a WeatherDataModel from a JSON:
+    /**
+     * Extracting weather data from JSON
+     *
+     * @param jsonObject the JSON object contain all the weather data from API call
+     * @return WeatherDataModel Object
+     */
     public static WeatherDataModel fromJson(JSONObject jsonObject) {
 
         try {
 
+            // WeatherDataModel Object
             WeatherDataModel weatherData = new WeatherDataModel();
 
+            // Access city name from JSON object via 'name' key
             weatherData.mCity = jsonObject.getString("name");
 
+            // Get the numerical weather condition from JSON nested under 'weather/0/id'
             weatherData.mCondition = jsonObject.getJSONArray("weather").getJSONObject(0).getInt("id");
 
+            // Set icon name based on numerical weather condition
             weatherData.mIconName = updateWeatherIcon(weatherData.mCondition);
 
+            // Calculate the temperature in Fahrenheit
             double tempResult = (jsonObject.getJSONObject("main").getDouble("temp") * 1.8) - 459.67;
             int roundedValue = (int) Math.rint(tempResult);
 
+            // Set the temperature to the String value of temperature
             weatherData.mTemperature = Integer.toString(roundedValue);
 
+            // Return the WeatherDataModel object
             return weatherData;
 
         } catch (JSONException e) {
@@ -38,7 +50,13 @@ public class WeatherDataModel {
         }
     }
 
-    // TODO: Get the weather image name from the condition:
+
+    /**
+     * Get corresponding weather icon based on the weather condition extracted from JSON
+     *
+     * @param condition the numerical weather condition
+     * @return the name of the weather icon
+     */
     private static String updateWeatherIcon(int condition) {
 
         if (condition >= 0 && condition < 300) {
@@ -70,7 +88,8 @@ public class WeatherDataModel {
         return "dunno";
     }
 
-    // TODO: Create getter methods for temperature, city, and icon name:
+
+    // Getter methods for temperature, city, and icon name:
 
     public String getTemperature() {
         return mTemperature + "°";

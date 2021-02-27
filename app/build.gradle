@@ -4,7 +4,7 @@ android {
     compileSdkVersion 27
 
     defaultConfig {
-        applicationId "com.londonappbrewery.climapm"
+        applicationId "com.kevinpham.climapm"
         minSdkVersion 16
         targetSdkVersion 27
         versionCode 1
@@ -19,10 +19,17 @@ android {
 }
 
 dependencies {
+    // Allows gradle to include all libraries in the libs folder under app
+    // But libraries update overtime and would require us to replace/update them periodically
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // Callback-based HTTP Client Library for Android
+    implementation 'com.loopj.android:android-async-http:1.4.9'
+
     testImplementation 'junit:junit:4.12'
+
+    // Makes our app. backwards compatible
     implementation 'com.android.support:appcompat-v7:27.0.2'
 
-//    James' Library
-    implementation 'com.loopj.android:android-async-http:1.4.9'
+
 }
