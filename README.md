@@ -1,2 +1,2 @@
 # Weather_App_Android
-A weather mobile android app.
+An android mobile application that tracks the weather
